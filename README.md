@@ -129,9 +129,6 @@ A powerful transparent browser application built with Electron, featuring window
 - 🎨 **Modern Glass Effect** - Beautiful frosted glass UI design
 - ⚡ **High Performance** - Based on Chromium engine, stable and smooth
 
-### 🖥️ Preview Screenshots
-
-*(Screenshots recommended)*
 
 ### 📋 System Requirements
 
