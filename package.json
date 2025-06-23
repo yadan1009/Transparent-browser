@@ -1,0 +1,29 @@
+{
+  "name": "transparent-browser",
+  "version": "1.0.0",
+  "description": "一个支持调节透明度和密码保护收藏夹的 macOS 玻璃质感浏览器",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "dist": "electron-builder --mac"
+  },
+  "keywords": ["browser", "transparent", "electron", "macos"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^27.0.0",
+    "electron-builder": "^24.6.4"
+  },
+  "build": {
+    "appId": "com.yourcompany.transparentbrowser",
+    "productName": "透明浏览器",
+    "directories": {
+      "output": "dist"
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "assets/icon.icns"
+    }
+  }
+} 

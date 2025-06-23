@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>透明浏览器</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="browser-container">
+        <!-- 标签栏 -->
+        <div class="tab-bar" style="display: none;">
+            <div class="tabs-container" id="tabs-container">
+                <!-- 标签页会动态插入这里 -->
+            </div>
+        </div>
+        
+        <div class="toolbar">
+            <div class="navigation-buttons">
+                <button id="back-btn" class="nav-btn" title="后退">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <button id="forward-btn" class="nav-btn" title="前进">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </button>
+                <button id="reload-btn" class="nav-btn" title="刷新">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                    </svg>
+                </button>
+                <button id="home-btn" class="nav-btn" title="主页">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+                        <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="url-bar-container">
+                <input type="text" id="url-bar" class="url-bar" placeholder="输入网址或搜索..." />
+                <button id="go-btn" class="go-btn">前往</button>
+            </div>
+            
+            <div class="feature-buttons">
+                <button id="opacity-btn" class="feature-btn" title="调节透明度">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2v20"/>
+                        <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10"/>
+                    </svg>
+                </button>
+                <button id="video-speed-btn" class="feature-btn" title="视频倍速">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                        <polygon points="19 3 19 21 23 12"/>
+                    </svg>
+                </button>
+                <button id="custom-links-btn" class="feature-btn" title="自定义链接">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                </button>
+                <button id="bookmark-btn" class="feature-btn" title="收藏夹">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <div class="webview-container" id="webview-container">
+            <webview id="webview" src="about:blank" 
+                     style="width: 100%; height: 100%;"
+                     allowpopups
+                     webpreferences="allowRunningInsecureContent, experimentalFeatures, nativeWindowOpen=no">
+            </webview>
+        </div>
+    </div>
+    
+    <!-- 透明度调节面板 -->
+    <div id="opacity-panel" class="popup-panel">
+        <div class="panel-header">
+            <h3>调节透明度</h3>
+            <button class="close-btn" onclick="document.getElementById('opacity-panel').classList.remove('show')">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="opacity-control">
+                <input type="range" id="opacity-slider" min="0" max="100" value="100" step="5">
+                <span id="opacity-value">100%</span>
+            </div>
+            <div class="opacity-presets">
+                <button class="preset-btn" data-opacity="0">0%</button>
+                <button class="preset-btn" data-opacity="25">25%</button>
+                <button class="preset-btn" data-opacity="50">50%</button>
+                <button class="preset-btn" data-opacity="75">75%</button>
+                <button class="preset-btn" data-opacity="100">100%</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 密码输入面板 -->
+    <div id="password-panel" class="popup-panel">
+        <div class="panel-header">
+            <h3>输入密码访问收藏夹</h3>
+            <button class="close-btn" onclick="document.getElementById('password-panel').classList.remove('show')">×</button>
+        </div>
+        <div class="panel-content">
+            <input type="password" id="password-input" placeholder="请输入密码" autocomplete="off">
+            <button id="password-submit" class="submit-btn">确认</button>
+            <div id="password-error" class="error-message"></div>
+        </div>
+    </div>
+    
+    <!-- 收藏夹面板 -->
+    <div id="bookmark-panel" class="popup-panel">
+        <div class="panel-header">
+            <h3>网页收藏夹</h3>
+            <button class="close-btn" onclick="document.getElementById('bookmark-panel').classList.remove('show')">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="bookmark-add">
+                <button id="add-bookmark" class="add-btn">+ 添加当前页面</button>
+            </div>
+            <div id="bookmark-list" class="bookmark-list"></div>
+            <div class="panel-footer">
+                <button id="change-password-btn" class="glass-button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0110 0v4"/>
+                    </svg>
+                    修改密码
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 修改密码面板 -->
+    <div id="change-password-panel" class="popup-panel">
+        <div class="panel-header">
+            <h3>修改密码</h3>
+            <button class="close-btn" onclick="document.getElementById('change-password-panel').classList.remove('show')">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="input-group">
+                <label>当前密码</label>
+                <input type="password" id="current-password" placeholder="请输入当前密码" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>新密码</label>
+                <input type="password" id="new-password" placeholder="请输入新密码" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>确认新密码</label>
+                <input type="password" id="confirm-password" placeholder="请再次输入新密码" autocomplete="off">
+            </div>
+            <button id="save-password" class="glass-button primary">保存密码</button>
+            <div id="change-password-error" class="error-message"></div>
+        </div>
+    </div>
+    
+    <!-- 自定义链接面板 -->
+    <div id="custom-links-panel" class="popup-panel wide-panel">
+        <div class="panel-header">
+            <h3>自定义快捷链接</h3>
+            <button class="close-btn" onclick="document.getElementById('custom-links-panel').classList.remove('show')">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="links-add">
+                <button id="add-new-link" class="add-btn">+ 添加新链接</button>
+            </div>
+            <div id="custom-links-list" class="links-list"></div>
+        </div>
+    </div>
+
+    <!-- 视频倍速面板 -->
+    <div id="video-speed-panel" class="popup-panel">
+        <div class="panel-header">
+            <h3>视频倍速控制</h3>
+            <button class="close-btn" onclick="document.getElementById('video-speed-panel').classList.remove('show')">×</button>
+        </div>
+        <div class="panel-content">
+            <div class="speed-info">
+                <div class="current-speed">
+                    <span class="speed-label">当前倍速</span>
+                    <span id="current-speed-value">1.0×</span>
+                </div>
+                <p class="speed-desc">拖动滑块实时调节视频播放速度</p>
+            </div>
+            
+            <div class="speed-control">
+                <div class="speed-range">
+                    <span class="range-label">0.25×</span>
+                    <input type="range" id="speed-slider" min="0.25" max="32" step="0.25" value="1">
+                    <span class="range-label">32×</span>
+                </div>
+                <div class="speed-display">
+                    <span id="speed-slider-value">1.0×</span>
+                </div>
+            </div>
+            
+            <div class="panel-footer">
+                <button id="reset-speed-btn" class="glass-button">重置为正常速度</button>
+            </div>
+        </div>
+    </div>
+    
+
+    <script src="renderer.js"></script>
+</body>
+</html> 
